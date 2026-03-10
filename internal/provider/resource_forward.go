@@ -98,11 +98,17 @@ func resourceForwardRead(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.Errorf("error getting HTTP forward (Host: %s): %s %s", d.Id(), err.Error(), err.Body())
 	}
 
-	d.Set("host", resp.GetHost())
-	d.Set("url", resp.GetUrl())
+	if err := d.Set("host", resp.GetHost()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("url", resp.GetUrl()); err != nil {
+		return diag.FromErr(err)
+	}
 
 	if resp.HasFrame() {
-		d.Set("frame", resp.GetFrame())
+		if err := d.Set("frame", resp.GetFrame()); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return nil
@@ -156,8 +162,12 @@ func resourceForwardImport(d *schema.ResourceData, meta interface{}) ([]*schema.
 		return nil, fmt.Errorf("error importing HTTP forward: Expected domain_id to be integer, got %s", s[0])
 	}
 
-	d.Set("domain_id", domainID)
-	d.Set("host", s[1])
+	if err := d.Set("domain_id", domainID); err != nil {
+		return nil, fmt.Errorf("error setting domain_id: %s", err)
+	}
+	if err := d.Set("host", s[1]); err != nil {
+		return nil, fmt.Errorf("error setting host: %s", err)
+	}
 	d.SetId(s[1])
 
 	return []*schema.ResourceData{d}, nil

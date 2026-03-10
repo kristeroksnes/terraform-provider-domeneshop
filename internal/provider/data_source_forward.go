@@ -50,11 +50,17 @@ func dataSourceForwardRead(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.Errorf("error getting HTTP forward (Host: %s): %s %s", host, err.Error(), err.Body())
 	}
 
-	d.Set("host", resp.GetHost())
-	d.Set("url", resp.GetUrl())
+	if err := d.Set("host", resp.GetHost()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("url", resp.GetUrl()); err != nil {
+		return diag.FromErr(err)
+	}
 
 	if resp.HasFrame() {
-		d.Set("frame", resp.GetFrame())
+		if err := d.Set("frame", resp.GetFrame()); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	d.SetId(resp.GetHost())

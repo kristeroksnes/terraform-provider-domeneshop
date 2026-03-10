@@ -136,7 +136,9 @@ func dataSourceDomainsRead(ctx context.Context, d *schema.ResourceData, meta int
 		})
 	}
 
-	d.Set("domains", domains)
+	if err := d.Set("domains", domains); err != nil {
+		return diag.FromErr(err)
+	}
 
 	id := fmt.Sprintf("%v", domains)
 	d.SetId(fmt.Sprintf("%d", schema.HashString(id)))

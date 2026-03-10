@@ -98,13 +98,27 @@ func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return diag.Errorf("error getting domain (ID: %d): %s %s", domainID, err.Error(), err.Body())
 	}
 
-	d.Set("domain", resp.GetDomain())
-	d.Set("expiry_date", resp.GetExpiryDate())
-	d.Set("registered_date", resp.GetRegisteredDate())
-	d.Set("renew", resp.GetRenew())
-	d.Set("registrant", resp.GetRegistrant())
-	d.Set("status", resp.GetStatus())
-	d.Set("nameservers", resp.GetNameservers())
+	if err := d.Set("domain", resp.GetDomain()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("expiry_date", resp.GetExpiryDate()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("registered_date", resp.GetRegisteredDate()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("renew", resp.GetRenew()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("registrant", resp.GetRegistrant()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("status", resp.GetStatus()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("nameservers", resp.GetNameservers()); err != nil {
+		return diag.FromErr(err)
+	}
 
 	var services []interface{}
 	if resp.HasServices() {
@@ -115,7 +129,9 @@ func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, meta inte
 			"webhotel":  resp.Services.GetWebhotel(),
 		})
 	}
-	d.Set("services", services)
+	if err := d.Set("services", services); err != nil {
+		return diag.FromErr(err)
+	}
 
 	d.SetId(strconv.Itoa(int(resp.GetId())))
 

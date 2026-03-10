@@ -68,7 +68,9 @@ func dataSourceForwardsRead(ctx context.Context, d *schema.ResourceData, meta in
 		})
 	}
 
-	d.Set("forwards", forwards)
+	if err := d.Set("forwards", forwards); err != nil {
+		return diag.FromErr(err)
+	}
 
 	id := fmt.Sprintf("%v", forwards)
 	d.SetId(fmt.Sprintf("%d", schema.HashString(id)))

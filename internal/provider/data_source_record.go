@@ -111,59 +111,87 @@ func dataSourceRecordRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return diag.Errorf("error getting DNS record (ID: %d): %s %s", recordID, err.Error(), err.Body())
 	}
 
-	d.Set("host", resp.GetHost())
-	d.Set("type", resp.GetType())
-	d.Set("data", resp.GetData())
-	d.Set("ttl", resp.GetTtl())
+	if err := d.Set("host", resp.GetHost()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("type", resp.GetType()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("data", resp.GetData()); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("ttl", resp.GetTtl()); err != nil {
+		return diag.FromErr(err)
+	}
 
 	if v, ok := resp.GetPriorityOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("priority", i)
+		if err := d.Set("priority", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetWeightOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("weight", i)
+		if err := d.Set("weight", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetPortOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("port", i)
+		if err := d.Set("port", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetFlagsOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("flags", i)
+		if err := d.Set("flags", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetTagOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("tag", i)
+		if err := d.Set("tag", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetAlgOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("alg", i)
+		if err := d.Set("alg", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetDigestOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("digest", i)
+		if err := d.Set("digest", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetUsageOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("usage", i)
+		if err := d.Set("usage", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetSelectorOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("selector", i)
+		if err := d.Set("selector", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if v, ok := resp.GetDtypeOk(); ok {
 		i, _ := strconv.Atoi(*v)
-		d.Set("dtype", i)
+		if err := d.Set("dtype", i); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	d.SetId(strconv.Itoa(int(recordID)))

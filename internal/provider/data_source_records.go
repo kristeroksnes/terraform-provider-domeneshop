@@ -161,7 +161,9 @@ func dataSourceRecordsRead(ctx context.Context, d *schema.ResourceData, meta int
 		})
 	}
 
-	d.Set("records", records)
+	if err := d.Set("records", records); err != nil {
+		return diag.FromErr(err)
+	}
 
 	id := fmt.Sprintf("%v", records)
 	d.SetId(fmt.Sprintf("%d", schema.HashString(id)))
