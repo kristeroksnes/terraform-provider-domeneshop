@@ -22,24 +22,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v2.1.3
-        with:
-          go-version: "1.15"
-        id: go
-
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2.3.3
+        uses: actions/checkout@v6
 
-      - name: Get dependencies
-        run: |
-          go mod download
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
 
       - name: Build
         run: |
           go build -v .
 
-  # run acceptance tests in a matrix with Terraform core versions
+  # run acceptance tests in a matrix with Terraform/OpenTofu versions
   test:
     name: Matrix Test
     needs: build
@@ -48,23 +43,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # list whatever Terraform versions here you would like to support
         terraform:
-          - "0.13.6"
-          - "0.14.4"
+          - "1.6.6"
+          - "1.9.8"
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v2.1.3
-        with:
-          go-version: "1.15"
-        id: go
-
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2.3.3
+        uses: actions/checkout@v6
 
-      - name: Get dependencies
-        run: |
-          go mod download
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
 
       - name: TF acceptance tests
         timeout-minutes: 10
@@ -72,10 +61,6 @@ jobs:
           TF_ACC: "1"
           TF_ACC_TERRAFORM_VERSION: ${{ matrix.terraform }}
 
-          # Set whatever additional acceptance test env vars here. You can
-          # optionally use data from your repository secrets using the
-          # following syntax:
-          # SOME_VAR: ${{ secrets.SOME_VAR }}
           DOMENESHOP_TOKEN: ${{ secrets.DOMENESHOP_TOKEN }}
           DOMENESHOP_SECRET: ${{ secrets.DOMENESHOP_SECRET }}
           DOMENESHOP_DOMAIN: ${{ secrets.DOMENESHOP_DOMAIN }}
